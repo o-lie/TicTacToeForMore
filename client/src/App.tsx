@@ -1,10 +1,27 @@
 import "./App.css";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Root from "src/routes/Root";
+import ErrorPage from "src/routes/ErrorPage";
+
+const router = createBrowserRouter([
+	{
+		path: "/",
+		element: <Root />,
+		errorElement: <ErrorPage />
+	},
+	{
+		path: "/start",
+		element: <div>Zagraj w grę!</div>,
+	},
+	{
+		path: "/end",
+		element: <div>Gra zakończona!</div>,
+	},
+]);
 
 function App() {
 	return (
-		<div>
-			hello
-		</div>
+		<RouterProvider router={router} />
 	);
 }
 
