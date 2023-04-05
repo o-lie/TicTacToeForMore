@@ -1,5 +1,5 @@
 import { io, Socket } from "socket.io-client";
-import { DefaultEventsMap } from '@socket.io/component-emitter';
+import { DefaultEventsMap } from "@socket.io/component-emitter";
 
 class SocketService {
 	public socket: Socket | null = null;
@@ -13,6 +13,7 @@ class SocketService {
 			if (!this.socket) return rj();
 
 			this.socket.on("connect", () => {
+				console.log(`User connected ${ this.socket?.id }`);
 				rs(this.socket as Socket);
 			});
 
