@@ -2,6 +2,7 @@ import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from "src/routes/Root";
 import ErrorPage from "src/routes/ErrorPage";
+import GamePage from "src/routes/GamePage";
 
 const router = createBrowserRouter([
 	{
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
 		element: <div>Zagraj w grę!</div>,
 	},
 	{
+		path: "/game",
+		element: <GamePage />
+	},
+	{
 		path: "/end",
 		element: <div>Gra zakończona!</div>,
 	},
@@ -21,7 +26,7 @@ const router = createBrowserRouter([
 
 function App() {
 	return (
-		<RouterProvider router={router} />
+		<RouterProvider router={ router } />
 	);
 }
 
