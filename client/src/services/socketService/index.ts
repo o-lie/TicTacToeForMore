@@ -14,13 +14,21 @@ class SocketService {
 
 			this.socket.on("connect", () => {
 				console.log(`User connected ${ this.socket?.id }`);
+
 				rs(this.socket as Socket);
+				this.socket?.emit("join", "room1");
 			});
 
 			this.socket.on("connect_error", (err) => {
 				console.log("Connection error: ", err);
 				rj(err);
+				this.socket?.disconnect();
 			});
+
+			this.socket.on("disconnect", () => {
+				console.log(`User disconnected ${ this.socket?.id }`);
+			});
+
 		});
 	}
 }
