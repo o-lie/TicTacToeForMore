@@ -1,35 +1,50 @@
-import { useState } from 'react';
-import io, { Socket } from "socket.io-client";
-import socketService from "src/services/socketService";
+import { useState } from "react";
+import { Container } from "@mui/material";
+import SnackbarProvider from "src/providers/SnackbarProvider";
+import Connect from "src/components/Connect";
+import WaitingRoom from "src/components/WaitingRoom";
+import { GameContext } from "src/providers/GameProvider";
+import { GameState } from "src/types/types";
+import Game from "src/components/Game";
+
+type Data = {
+	serverAddress: string,
+	username: string
+}
 
 const Root = () => {
-	const [ serverAddress, setServerAddress ] = useState("");
-	const [ socket, setSocket ] = useState<Socket>();
-
-	const connectSocket = async () => {
-		const socket = await socketService
-			.connect(serverAddress)
-			.catch((err) => {
-				console.log("Error: ", err);
-			});
-
-		console.log(socket);
-	};
-
-
-	const onSubmit = () => {
-		connectSocket().then(r => console.log(r));
-	}
+	const [ gameState, setGameState ] = useState<GameState>({
+		isConnected: false,
+		isStarted: false,
+		username: ""
+	});
 
 	return (
-		<>
-			<label>Podaj adres IP serwera:</label>
-			<input
-				value={ serverAddress }
-				onChange={ (e) => setServerAddress(e.target.value)}
-			/>
-			<button onClick={ onSubmit }>Połącz</button>
-		</>
+		<GameContext.Provider value={ { gameState, setGameState } }>
+			<SnackbarProvider>
+				{/*<AppBar position="static" color={"transparent"}>*/ }
+				{/*	<Toolbar>*/ }
+				{/*		<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>*/ }
+				{/*			News*/ }
+				{/*		</Typography>*/ }
+				{/*	</Toolbar>*/ }
+				{/*</AppBar>*/ }
+				<Container maxWidth={ "md" }>
+					{
+						!gameState.isConnected &&
+                        <Connect/>
+					}
+					{
+						gameState.isConnected &&
+                        <WaitingRoom/>
+					}
+					{
+						gameState.isStarted &&
+                        <Game/>
+					}
+				</Container>
+			</SnackbarProvider>
+		</GameContext.Provider>
 	);
 };
 

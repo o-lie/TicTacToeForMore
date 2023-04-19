@@ -18,16 +18,19 @@ var unmatched;
 
 const io: Server = new Server(httpServer, {
 	cors: {
-		origin: "http://localhost:3000",
+		origin: "*",
 		methods: [ "GET", "POST" ]
 	}
 });
 
+let clientCount: number = 0;
 io.on("connection", (socket) => {
-	//let id = socket.Io;
+	clientCount++;
 	console.log(`User connected ${ socket.id }`);
-	socket.on('disconnect', () => {
-		console.log('User disconnected');
+
+	socket.on("disconnect", () => {
+		clientCount--;
+		console.log("User disconnected");
 	});
 });
 
