@@ -8,8 +8,13 @@ config();
 
 const app: Application = express();
 const httpServer = http.createServer(app);
+const socketIo = require("socket.io");
+const fs = require("fs");
 
 app.use(cors());
+
+var players = {};
+var unmatched;
 
 const io: Server = new Server(httpServer, {
 	cors: {
@@ -19,6 +24,7 @@ const io: Server = new Server(httpServer, {
 });
 
 io.on("connection", (socket) => {
+	//let id = socket.Io;
 	console.log(`User connected ${ socket.id }`);
 	socket.on('disconnect', () => {
 		console.log('User disconnected');
@@ -26,7 +32,11 @@ io.on("connection", (socket) => {
 });
 
 app.get("/", (req: Request, res: Response, next: NextFunction) => {
+	//const stream = fs.createReadStream(__dirname + "/../client/GamePage.tsx");
+
 	res.send("Express server with TSesesss");
+
+
 });
 
 const PORT = process.env.PORT || 3001;
