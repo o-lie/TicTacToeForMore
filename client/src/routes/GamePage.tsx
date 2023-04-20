@@ -1,119 +1,113 @@
-import * as React from 'react';
-import io, { Socket } from "socket.io-client";
+import React, { useContext, useEffect, useState } from "react";
+import styled from "styled-components";
+import gameContext from "../gameContext";
+import gameService from "../services/socketService/gameService";
+import socketService from "../services/socketService";
 
-const url = window.location.origin;
-//const socket = io.connect(url);
-/*
-var myTurn = true;
-var symbol;
+const GameContainer = styled.div`
+    display: flex;
+    flex-director: column;
+    font-family: "Zen Tokyo Zoo", cursive;
+    position: relative;
+`;
 
-function gameBoardState() {
-	var obj = {};
+const RowContainer = styled.div`
+    width: 100%;
+    display: flex;
+`;
 
-	$(".board button").each(function() {
-		obj[$(this).attr("id")] = $(this).text() || "";
-	  });
-	
-	  return obj;
+interface ICellProps {
+    borderTop?: boolean;
+    borderRight?: boolean;
+    borderLeft?: boolean;
+    borderBottom?: boolean;
+  }
+  
+const Cell = styled.div<ICellProps>`
+    width: 13em;
+    height: 9em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    cursor: pointer;
+    border-top: ${({ borderTop }) => borderTop && "3px solid #8e44ad"};
+    border-left: ${({ borderLeft }) => borderLeft && "3px solid #8e44ad"};
+    border-bottom: ${({ borderBottom }) => borderBottom && "3px solid #8e44ad"};
+    border-right: ${({ borderRight }) => borderRight && "3px solid #8e44ad"};
+    transition: all 270ms ease-in-out;
+  
+    &:hover {
+      background-color: #8d44ad28;
+    }
+`;
+  
+const PlayStopper = styled.div`
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 99;
+    cursor: default;
+`;
+  
+const X = styled.span`
+    font-size: 100px;
+    color: #8e44ad;
+    &::after {
+      content: "X";
+    }
+`;
+  
+const O = styled.span`
+    font-size: 100px;
+    color: #8e44ad;
+    &::after {
+      content: "O";
+    }
+`;
+
+export type IPlayMatrix = Array<Array<string | null>>;
+export interface IStartGame {
+    start: boolean;
+    symbol: "x" | "o";
 }
 
-function isGameOver() {
-	var state = gameBoardState();
-	var matches = ["XXX", "000"];
-
-	var rows = [
-		state.r0c0 + state.r0c1 + state.r0c2,
-      	state.r1c0 + state.r1c1 + state.r1c2, 
-      	state.r2c0 + state.r2c1 + state.r2c2, 
-      	state.r0c0 + state.r1c0 + state.r2c0, 
-      	state.r0c1 + state.r1c1 + state.r2c1, 
-      	state.r0c2 + state.r1c2 + state.r2c2, 
-      	state.r0c0 + state.r1c1 + state.r2c2, 
-      	state.r0c2 + state.r1c1 + state.r2c0
-	];
-
-	for (var i = 0; i < rows.length; i++) {
-        if (rows[i] === matches[0] || rows[i] === matches[1]) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-function renderTurnMessage() {
-    if (!myTurn) { // If not player's turn disable the board
-        $("#message").text("Your opponent's turn");
-        $(".board button").attr("disabled", true);
-    } else { // Enable it otherwise
-        $("#message").text("Your turn.");
-        $(".board button").removeAttr("disabled");
-    }
-}
-
-function makeMove(e) {
-    if (!myTurn) {
-        return; // Shouldn't happen since the board is disabled
-    }
-
-    if ($(this).text().length) {
-        return; // If cell is already checked
-    }
-
-    socket.emit("make.move", { // Valid move (on client side) -> emit to server
-        symbol: symbol,
-        position: $(this).attr("id")
-    });
-}
-
-// Bind event on players move
-socket.on("move.made", function(data) {
-    $("#" + data.position).text(data.symbol); // Render move
-
-    // If the symbol of the last move was the same as the current player
-    // means that now is opponent's turn
-    myTurn = data.symbol !== symbol;
-
-    if (!isGameOver()) { // If game isn't over show who's turn is this
-        renderTurnMessage();
-    } else { // Else show win/lose message
-        if (myTurn) {
-            $("#message").text("You lost.");
-        } else {
-            $("#message").text("You won!");
-        }
-
-        $(".board button").attr("disabled", true); // Disable board
-    }
-});
-
-
-// Bind event for game begin
-socket.on("game.begin", function(data) {
-    symbol = data.symbol; // The server is assigning the symbol
-    myTurn = symbol === "X"; // 'X' starts first
-    renderTurnMessage();
-});
-
-// Bind on event for opponent leaving the game
-socket.on("opponent.left", function() {
-    $("#message").text("Your opponent left the game.");
-    $(".board button").attr("disabled", true);
-});
-
-// Binding buttons on the board
-$(function() {
-  $(".board button").attr("disabled", true); // Disable board at the beginning
-  $(".board> button").on("click", makeMove);
-});
-*/
 const GamePage = () => {
-	return (
-		<div className="board">
-		<button id="r0c0"></button> <button id="r0c1"></button> <button id="r0c2"></button>
-		<button id="r1c0"></button> <button id="r1c1"></button> <button id="r1c2"></button>
-		<button id="r2c0"></button> <button id="r2c1"></button> <button id="r2c2"></button>
-	</div>
+	return (/*
+		<GameContainer>
+      {!isGameStarted && (
+        <h2>Waiting for Other Player to Join to Start the Game!</h2>
+      )}
+      {(!isGameStarted || !isPlayerTurn) && <PlayStopper />}
+      {matrix.map((row, rowIdx) => {
+        return (
+          <RowContainer>
+            {row.map((column, columnIdx) => (
+              <Cell
+                borderRight={columnIdx < 2}
+                borderLeft={columnIdx > 0}
+                borderBottom={rowIdx < 2}
+                borderTop={rowIdx > 0}
+                onClick={() =>
+                  updateGameMatrix(columnIdx, rowIdx, playerSymbol)
+                }
+              >
+                {column && column !== "null" ? (
+                  column === "x" ? (
+                    <X />
+                  ) : (
+                    <O />
+                  )
+                ) : null}
+              </Cell>
+            ))}
+          </RowContainer>
+        );
+      })}
+    </GameContainer>*/
+    <div>hello world!</div>
 	);
 }
 
