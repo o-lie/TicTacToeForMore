@@ -14,14 +14,20 @@ export type SnackbarState = {
 export type Player = {
 	id: string,
 	username: string,
-	avatarId: number
+	avatarId: number,
+	roomCode: string,
+	opponentsIds: string[]
 }
 
 export type GameState = {
+	allPlayers: Player[],
 	isConnected: boolean,
 	isStarted: boolean,
+	hasJoined: boolean,
 	username: string,
-	avatar?: Avatar
+	avatar?: Avatar,
+	roomCode: string | null,
+	clientCount: number
 }
 
 export type Avatar = {
@@ -59,6 +65,6 @@ export const avatarDictionary: EnumDictionary<AvatarTypeEnum, Avatar> = {
 
 export type GameContextType = {
 	gameState: GameState,
-	setGameState?: (gameState: GameState) => void
+	setGameState: (gameState: GameState) => void,
+	setRoomCode?: (roomCode: string | null) => void
 }
-

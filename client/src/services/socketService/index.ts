@@ -16,19 +16,29 @@ class SocketService {
 				console.log(`User connected ${ this.socket?.id }`);
 
 				rs(this.socket as Socket);
-				this.socket?.emit("join", "room1");
 			});
 
 			this.socket.on("connect_error", (err) => {
 				console.log("Connection error: ", err);
 				rj(err);
-				this.socket?.disconnect();
 			});
 
 			this.socket.on("disconnect", () => {
 				console.log(`User disconnected ${ this.socket?.id }`);
 			});
+		});
+	}
 
+	public async joinRoom(
+		data: {
+			roomCode: string,
+			username: string
+		}
+	): Promise<boolean> {
+		return new Promise((rs, rj) => {
+			this.socket?.emit("joinRoom", data.roomCode, data.username);
+			this.socket?.on("room_joined", () => rs(true));
+			this.socket?.on("room_join_error", ({ error }) => rj(error));
 		});
 	}
 }

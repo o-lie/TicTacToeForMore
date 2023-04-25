@@ -1,0 +1,1 @@
+export const isEmptyString = (object: any): object is "" => typeof object === "string" && object.trim() === "";
