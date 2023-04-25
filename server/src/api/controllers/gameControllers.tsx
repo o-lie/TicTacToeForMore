@@ -7,7 +7,7 @@ import {
 } from "socket-controllers";
 import { Server, Socket } from "socket.io";
 
-@SocketController()
+SocketController()
 export class GameController {
   private getSocketGameRoom(socket: Socket): string {
     const socketRooms = Array.from(socket.rooms.values()).filter(
@@ -17,7 +17,7 @@ export class GameController {
 
     return gameRoom;
   }
-
+/*
   @OnMessage("update_game")
   public async updateGame(
     @SocketIO() io: Server,
@@ -36,5 +36,5 @@ export class GameController {
   ) {
     const gameRoom = this.getSocketGameRoom(socket);
     socket.to(gameRoom).emit("on_game_win", message);
-  }
+  }*/
 }
