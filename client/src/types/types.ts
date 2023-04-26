@@ -15,8 +15,7 @@ export type Player = {
 	id: string,
 	username: string,
 	avatarId: number,
-	roomCode: string,
-	opponentsIds: string[]
+	roomCode: string
 }
 
 export type GameState = {

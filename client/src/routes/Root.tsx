@@ -45,9 +45,9 @@ const Root = () => {
 			showSnackbar(`Zostałeś rozłączony z serwerem. ${ reason }`, "error");
 		});
 
-		socket?.on("otherUserDisconnected", (id) => {
+		socket?.on("otherUserDisconnected", (username) => {
 			setGameState({ ...gameState, isStarted: false });
-			showSnackbar(`Użytkownik ${ id } wyszedł z gry.`, "info");
+			showSnackbar(`Użytkownik ${ username } opuścił pokój.`, "info");
 		});
 	});
 

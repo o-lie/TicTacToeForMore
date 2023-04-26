@@ -10,8 +10,7 @@ export type Player = {
 	id: string,
 	username: string,
 	avatarId: number,
-	roomCode: string,
-	opponentsIds: string[]
+	roomCode: string
 }
 
 const app: Application = express();
@@ -30,18 +29,37 @@ let players: Player[] = [];
 io.on("connection", (socket) => {
 
 	let roomName: string;
+	let userName: string;
 
 	console.log(`User connected ${ socket.id }`);
 
-	socket.on("joinRoom", (roomCode, username) => {
+	socket.on("joinRoom", (roomCode, username, avatarId) => {
 		const chosenRoom = io.sockets.adapter.rooms.get(roomCode);
-
+		userName = username;
 		//if chosen room already exists and has 3 players throw an error
 		if (chosenRoom && chosenRoom.size === 3) {
 			socket.emit("room_join_error", {
 				error: "Pokój jest pełny, wybierz inny pokój do gry."
 			});
-		} else {
+		}
+
+		//if there is a player with the same username in the chosen room, throw an error
+		else if (players.find(player => player.username === username)) {
+			socket.emit("room_join_error", {
+				error: "W pokoju znajduje się już gracz o takiej nazwie. Wybierz inną."
+			});
+		}
+
+		//if there is a player with the same avatar in the chosen room, throw an error
+		else if (players.find(player => player.avatarId === avatarId)) {
+			console.log(players);
+			socket.emit("room_join_error", {
+				error: "W pokoju znajduje się już gracz o takim awatarze. Wybierz inny."
+			});
+		}
+
+		//join chosen room
+		else {
 			roomName = roomCode;
 
 			socket.join(roomCode);
@@ -53,13 +71,13 @@ io.on("connection", (socket) => {
 			players.push({
 				id: socket.id,
 				username: username,
-				avatarId: 0,
-				roomCode: roomCode,
-				opponentsIds: [ "" ]
+				avatarId: avatarId,
+				roomCode: roomCode
 			});
 
 			io.to(roomCode).emit("updatePlayers", players.filter(player => player.roomCode === roomName));
 
+			//if chosen room has 3 players start the game
 			if (room && room.size === 3) {
 				io.to(roomCode).emit("startGame");
 			}
@@ -73,14 +91,14 @@ io.on("connection", (socket) => {
 		io.to(roomName).emit("updatePlayers", players.filter(player => player.roomCode === roomName));
 
 		socket.emit("socketDisconnected", reason);
-		io.to(roomName).emit("otherUserDisconnected", socket.id);
+		io.to(roomName).emit("otherUserDisconnected", userName);
 
 		console.log(`User disconnected ID: ${ socket.id }`);
 	});
 });
 
 app.get("/", (req: Request, res: Response, next: NextFunction) => {
-	res.send("Express server with TSesesss");
+	res.send("Express server with TS");
 });
 
 const PORT = process.env.PORT || 3001;

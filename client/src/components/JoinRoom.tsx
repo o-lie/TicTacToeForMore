@@ -4,12 +4,12 @@ import { LoadingButton } from "@mui/lab";
 import { SnackbarContext } from "src/providers/SnackbarProvider";
 import { GameContext } from "src/providers/GameProvider";
 import SocketService from "src/services/socketService";
-import { AvatarTypeEnum } from "src/types/types";
 import { isEmptyString } from "src/utils/typeguards";
 
 type Data = {
 	username: string,
-	roomCode: string
+	roomCode: string,
+	avatarId: number
 }
 
 const JoinRoom = () => {
@@ -21,7 +21,8 @@ const JoinRoom = () => {
 	const [ data, setData ] = useState<Data>(
 		{
 			username: "",
-			roomCode: ""
+			roomCode: "",
+			avatarId: 0
 		}
 	);
 	const [ isLoading, setIsLoading ] = useState<boolean>(false);
@@ -36,7 +37,7 @@ const JoinRoom = () => {
 
 	const onSubmit = async () => {
 		setIsLoading(true);
-
+		console.log(data);
 		await SocketService
 			.joinRoom(data)
 			.then(() => {
@@ -54,6 +55,7 @@ const JoinRoom = () => {
 	useEffect(() => {
 		validateFormData();
 	}, [ data ]);
+
 
 	return (
 
@@ -87,12 +89,16 @@ const JoinRoom = () => {
 						<FormLabel id="user-shape">Kształt</FormLabel>
 						<RadioGroup
 							aria-labelledby="user-shape"
-							defaultValue="apple"
 							name="radio-buttons-group"
+							value={ data.avatarId }
+							onChange={ (e) => setData(prevState => ({
+								...prevState,
+								avatarId: +e.target.value
+							})) }
 						>
-							<FormControlLabel value={ AvatarTypeEnum.APPLE } control={ <Radio/> } label="Jabłko"/>
-							<FormControlLabel value="lemon" control={ <Radio/> } label="Cytryna"/>
-							<FormControlLabel value="pepper" control={ <Radio/> } label="Papryka"/>
+							<FormControlLabel value={ 0 } control={ <Radio/> } label="Jabłko"/>
+							<FormControlLabel value={ 1 } control={ <Radio/> } label="Cytryna"/>
+							<FormControlLabel value={ 2 } control={ <Radio/> } label="Papryka"/>
 						</RadioGroup>
 					</FormControl>
 					<LoadingButton

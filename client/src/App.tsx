@@ -7,6 +7,7 @@ import { useState } from "react";
 import { GameState } from "src/types/types";
 import { GameContext } from "./providers/GameProvider";
 import SnackbarProvider from "./providers/SnackbarProvider";
+import { createTheme, ThemeProvider } from "@mui/material";
 
 const router = createBrowserRouter([
 	{
@@ -16,16 +17,16 @@ const router = createBrowserRouter([
 	},
 	{
 		path: "/start",
-		element: <div>Zagraj w grę!</div>,
+		element: <div>Zagraj w grę!</div>
 	},
 	{
 		path: "/game",
-		element: <GamePage />
+		element: <GamePage/>
 	},
 	{
 		path: "/end",
-		element: <div>Gra zakończona!</div>,
-	},
+		element: <div>Gra zakończona!</div>
+	}
 ]);
 
 function App() {
@@ -39,12 +40,28 @@ function App() {
 		clientCount: 0
 	});
 
+	const theme = createTheme({
+		palette: {
+			primary: {
+				main: "#a677dd"
+			},
+			secondary: {
+				main: "#77DDDA"
+			}
+		},
+		typography: {
+			fontFamily: "Poppins"
+		}
+	});
+
 	return (
-		<GameContext.Provider value={ { gameState, setGameState } }>
-			<SnackbarProvider>
-				<RouterProvider router={ router }/>
-			</SnackbarProvider>
-		</GameContext.Provider>
+		<ThemeProvider theme={ theme }>
+			<GameContext.Provider value={ { gameState, setGameState } }>
+				<SnackbarProvider>
+					<RouterProvider router={ router }/>
+				</SnackbarProvider>
+			</GameContext.Provider>
+		</ThemeProvider>
 	);
 }
 

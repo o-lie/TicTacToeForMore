@@ -1,7 +1,9 @@
-import { Avatar, Box, Stack, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { Avatar, Box, List, ListItem, ListItemAvatar, ListItemText, ListSubheader, Typography } from "@mui/material";
+import React, { useContext, useEffect, useState } from "react";
 import { GameContext } from "src/providers/GameProvider";
 import Pepper from "src/assets/images/avatar-1.png";
+import Apple from "src/assets/images/avatar-0.png";
+import Lemon from "src/assets/images/avatar-2.png";
 import socketService from "src/services/socketService";
 import { Player } from "src/types/types";
 
@@ -18,28 +20,35 @@ const WaitingRoom = () => {
 		});
 
 		return () => {
-			socket?.off("updateClientCount");
+			socket?.off("updatePlayers");
 		};
 	});
 
 	return (
 		<Box>
-			{
-				players &&
-				players.map(player => {
-					return (player.username);
-				})
-			}
-			<Typography variant={ "h1" }>
-				Witaj w grze!
+			<Typography variant={ "h2" }>
+				Witaj w pokoju { gameState.roomCode }!
 			</Typography>
 			<Typography variant={ "h3" }>
 				Status: W oczekiwaniu na graczy { gameState.clientCount }/3
 			</Typography>
-			<Stack spacing={ 2 } direction={ "row" }>
-				<Avatar src={ Pepper }></Avatar>
-				<Typography variant={ "h5" }>{ gameState.username }</Typography>
-			</Stack>
+			<List sx={ { width: "100%", maxWidth: 360, bgcolor: "background.paper" } }
+				  subheader={ <ListSubheader>Lista graczy</ListSubheader> }
+			>
+				{
+					players &&
+					players.map(player => {
+						return (
+							<ListItem>
+								<ListItemAvatar>
+									<Avatar src={ player.avatarId === 0 ? Apple : (player.avatarId === 1 ? Lemon : Pepper) }></Avatar>
+								</ListItemAvatar>
+								<ListItemText primary={ player.username }/>
+							</ListItem>
+						);
+					})
+				}
+			</List>
 		</Box>
 	);
 };
