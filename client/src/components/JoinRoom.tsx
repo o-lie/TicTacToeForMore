@@ -1,81 +1,66 @@
 import { useContext, useEffect, useState } from "react";
-import { Box, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Stack, TextField, Typography } from "@mui/material";
+import { Box, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Stack, TextField } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { SnackbarContext } from "src/providers/SnackbarProvider";
 import { GameContext } from "src/providers/GameProvider";
-import socketService from "src/services/socketService";
+import SocketService from "src/services/socketService";
 import { AvatarTypeEnum } from "src/types/types";
+import { isEmptyString } from "src/utils/typeguards";
 
 type Data = {
-	serverAddress: string,
-	username: string
+	username: string,
+	roomCode: string
 }
 
-const Connect = () => {
+const JoinRoom = () => {
 	const { showSnackbar } = useContext(SnackbarContext);
 	const { gameState, setGameState } = useContext(GameContext);
 
+	const [ isUsernameTaken, toggleIsUsernameTaken ] = useState<boolean>(false);
 	const [ isFormDataValid, toggleIsFormDataValid ] = useState<boolean>(false);
 	const [ data, setData ] = useState<Data>(
 		{
-			serverAddress: "",
-			username: ""
+			username: "",
+			roomCode: ""
 		}
 	);
 	const [ isLoading, setIsLoading ] = useState<boolean>(false);
-	const connectSocket = async () => {
-
-		const socket = await socketService
-			.connect(data?.serverAddress)
-			.then(() => {
-				if (setGameState) {
-					setGameState({ ...gameState, isConnected: true, username: data.username });
-				}
-				showSnackbar("Pomyślnie połączono z serwerem!", "success");
-				setIsLoading(false);
-			})
-			.catch((err) => {
-				showSnackbar("Coś poszło nie tak. Nie udało się nawiązać połączenia z serwerem.", "error");
-				setIsLoading(false);
-				console.log("Error: ", err);
-			});
-
-	};
 
 	const validateFormData = () => {
-		if (data.serverAddress === "" || data.username === "") {
+		if (isEmptyString(data.username) || isEmptyString(data.roomCode)) {
 			toggleIsFormDataValid(false);
 		} else {
 			toggleIsFormDataValid(true);
 		}
 	};
 
-	const onSubmit = () => {
+	const onSubmit = async () => {
 		setIsLoading(true);
-		connectSocket();
+
+		await SocketService
+			.joinRoom(data)
+			.then(() => {
+				setGameState({ ...gameState, hasJoined: true, roomCode: data.roomCode, username: data.username });
+				showSnackbar("Dołączyłeś do gry!", "success");
+				setIsLoading(false);
+			})
+			.catch((err) => {
+				showSnackbar(err, "error");
+				setIsLoading(false);
+				console.log("Error: ", err);
+			});
 	};
 
 	useEffect(() => {
 		validateFormData();
 	}, [ data ]);
 
-	useEffect(() => {
-		if (setGameState) {
-			setGameState({ ...gameState, isConnected: false });
-		}
-
-	}, [ socketService.socket?.connected ]);
-
-	socketService?.socket?.on("getRooms", (data) => {
-		console.log(data);
-	});
 	return (
 
 		<Box>
 			<Stack spacing={ 4 } sx={ {
 				margin: "auto"
 			} }>
-				<Typography variant={ "h1" } align={ "center" }>TicTacToeForMore</Typography>
 				<Stack gap={ 2 } direction={ "column" }>
 					<TextField
 						id="username"
@@ -86,15 +71,17 @@ const Connect = () => {
 							...prevState,
 							username: e.target.value
 						})) }
+						error={ isUsernameTaken }
+						helperText={ isUsernameTaken ? "Ta nazwa użytkownika jest zajęta." : "" }
 					/>
 					<TextField
-						id="server-address"
-						label="Adres IP serwera"
+						id="room-code"
+						label="Nazwa pokoju"
 						variant="outlined"
-						value={ data.serverAddress }
+						value={ data.roomCode }
 						onChange={ (e) => setData(prevState => ({
 							...prevState,
-							serverAddress: e.target.value
+							roomCode: e.target.value
 						})) }/>
 					<FormControl>
 						<FormLabel id="user-shape">Kształt</FormLabel>
@@ -123,4 +110,4 @@ const Connect = () => {
 	);
 };
 
-export default Connect;
+export default JoinRoom;
