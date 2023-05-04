@@ -6,6 +6,7 @@ const defaultState: GameContextType = {
 		allPlayers: [],
 		isConnected: false,
 		hasJoined: false,
+		canStart: false,
 		isStarted: false,
 		username: "",
 		roomCode: null,

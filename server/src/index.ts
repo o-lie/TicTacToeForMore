@@ -36,6 +36,7 @@ io.on("connection", (socket) => {
 	socket.on("joinRoom", (roomCode, username, avatarId) => {
 		const chosenRoom = io.sockets.adapter.rooms.get(roomCode);
 		userName = username;
+
 		//if chosen room already exists and has 3 players throw an error
 		if (chosenRoom && chosenRoom.size === 3) {
 			socket.emit("room_join_error", {
@@ -44,15 +45,14 @@ io.on("connection", (socket) => {
 		}
 
 		//if there is a player with the same username in the chosen room, throw an error
-		else if (players.find(player => player.username === username)) {
+		else if (players.find(player => (player.roomCode === roomCode && player.username === username))) {
 			socket.emit("room_join_error", {
 				error: "W pokoju znajduje się już gracz o takiej nazwie. Wybierz inną."
 			});
 		}
 
 		//if there is a player with the same avatar in the chosen room, throw an error
-		else if (players.find(player => player.avatarId === avatarId)) {
-			console.log(players);
+		else if (players.find(player => (player.roomCode === roomCode && player.avatarId === avatarId))) {
 			socket.emit("room_join_error", {
 				error: "W pokoju znajduje się już gracz o takim awatarze. Wybierz inny."
 			});
@@ -75,23 +75,25 @@ io.on("connection", (socket) => {
 				roomCode: roomCode
 			});
 
-			io.to(roomCode).emit("updatePlayers", players.filter(player => player.roomCode === roomName));
-
 			//if chosen room has 3 players start the game
-			if (room && room.size === 3) {
-				io.to(roomCode).emit("startGame");
-			}
+			io.in(roomCode).emit("updatePlayers", players.filter(player => player.roomCode === roomName), room && room.size === 3);
 		}
 	});
 
-	socket.on("disconnect", (reason) => {
+	socket.on("startGame", () => {
+		io.in(roomName).emit("gameStarted");
+	});
 
+	socket.on("disconnecting", () => {
+
+		// io.in(roomName).emit("updatePlayers", players.filter(player => player.roomCode === roomName));
+	});
+
+	socket.on("disconnect", (reason) => {
 		players = players.filter(player => player.id !== socket.id);
 
-		io.to(roomName).emit("updatePlayers", players.filter(player => player.roomCode === roomName));
-
 		socket.emit("socketDisconnected", reason);
-		io.to(roomName).emit("otherUserDisconnected", userName);
+		io.in(roomName).emit("otherUserDisconnected", players.filter(player => player.roomCode === roomName));
 
 		console.log(`User disconnected ID: ${ socket.id }`);
 	});

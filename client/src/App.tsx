@@ -33,6 +33,7 @@ function App() {
 	const [ gameState, setGameState ] = useState<GameState>({
 		allPlayers: [],
 		isConnected: false,
+		canStart: false,
 		isStarted: false,
 		hasJoined: false,
 		username: "",

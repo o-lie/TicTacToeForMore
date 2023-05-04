@@ -7,6 +7,7 @@ import { GameContext } from "src/providers/GameProvider";
 import Game from "src/components/Game";
 import socketService from "src/services/socketService";
 import JoinRoom from "src/components/JoinRoom";
+import { Player } from "src/types/types";
 
 type Data = {
 	serverAddress: string,
@@ -36,19 +37,25 @@ const Root = () => {
 	const socket = socketService.socket;
 
 	useEffect(() => {
-		socket?.on("startGame", () => {
+		socket?.on("gameStarted", () => {
 			setGameState({ ...gameState, isStarted: true });
+			showSnackbar(`Gra rozpoczęta.`, "success");
 		});
 
 		socket?.on("socketDisconnected", (reason) => {
-			setGameState({ ...gameState, isConnected: false, isStarted: false });
+			setGameState({ ...gameState, isConnected: false, canStart: false, isStarted: false });
 			showSnackbar(`Zostałeś rozłączony z serwerem. ${ reason }`, "error");
 		});
 
-		socket?.on("otherUserDisconnected", (username) => {
-			setGameState({ ...gameState, isStarted: false });
-			showSnackbar(`Użytkownik ${ username } opuścił pokój.`, "info");
+		socket?.on("otherUserDisconnected", (players: Player[]) => {
+			setGameState({ ...gameState, canStart: false, isStarted: false, allPlayers: players, clientCount: players.length });
+			showSnackbar(`Inny użytkownik opuścił pokój.`, "info");
 		});
+
+		socket?.on("updatePlayers", (players: Player[], canStartGame) => {
+			setGameState({ ...gameState, allPlayers: players, clientCount: players.length, canStart: canStartGame });
+		});
+
 	});
 
 	return (

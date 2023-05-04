@@ -21,6 +21,7 @@ export type Player = {
 export type GameState = {
 	allPlayers: Player[],
 	isConnected: boolean,
+	canStart: boolean,
 	isStarted: boolean,
 	hasJoined: boolean,
 	username: string,
