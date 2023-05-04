@@ -7,6 +7,19 @@ body, #root {
 }
 
 .board {
+  margin: auto;
+  width: 490px;
+}
+
+.board button {
+  height: 150px;
+  width: 150px;
+  float: left; 
+  margin: 5px;
+  font-size: 3em;
+}
+
+.board {
     width: 500px;
     height: 500px;
     background-color: #ffffff;
