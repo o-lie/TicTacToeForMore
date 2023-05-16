@@ -26,7 +26,19 @@ function App() {
 		username: "",
 		roomCode: null,
 		clientCount: 0,
-		avatarId: 0
+		avatarId: 0,
+		boards: [
+			{
+				id: 0,
+				isPlayerTurn: false,
+				hasWon: false
+			},
+			{
+				id: 1,
+				isPlayerTurn: false,
+				hasWon: false
+			}
+		]
 	});
 
 	const theme = createTheme({

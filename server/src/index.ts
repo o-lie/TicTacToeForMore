@@ -80,7 +80,6 @@ io.on("connection", (socket) => {
 		}
 
 		socket.on("startGame", () => {
-			// io.in(roomCode).emit("gameStarted");
 			players.filter(player => player.roomCode === roomCode);
 			players.forEach((player, index) => {
 				if (index === 0) {
@@ -88,7 +87,7 @@ io.on("connection", (socket) => {
 					const boards = [
 						{
 							id: 0,
-							isPlayerTurn: false,
+							isPlayerTurn: true,
 							hasWon: false
 						},
 						{
@@ -109,7 +108,7 @@ io.on("connection", (socket) => {
 						},
 						{
 							id: 2,
-							isPlayerTurn: false,
+							isPlayerTurn: true,
 							hasWon: false
 						}
 					];
@@ -120,7 +119,7 @@ io.on("connection", (socket) => {
 					const boards = [
 						{
 							id: 1,
-							isPlayerTurn: false,
+							isPlayerTurn: true,
 							hasWon: false
 						},
 						{
@@ -136,12 +135,10 @@ io.on("connection", (socket) => {
 			});
 		});
 
-		socket.on("update_game", (matrix, boardId) => {
-			io.in(roomName).emit("on_game_update", matrix, boardId);
+		socket.on("updateGame", (matrix, boardId) => {
+			socket.to(roomName).emit("onGameUpdate", matrix, boardId);
 		});
 	});
-
-
 
 	socket.on("disconnect", (reason) => {
 		players = players.filter(player => player.id !== socket.id);

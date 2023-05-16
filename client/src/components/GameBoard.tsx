@@ -73,33 +73,60 @@ const GameBoard = (props: Props) => {
 
 	const updateGameMatrix = (column: number, row: number, symbol: number) => {
 		const newMatrix = [ ...matrix ];
-		console.log(id);
-		// if (newMatrix[ row ][ column ] === null || newMatrix[ row ][ column ] === null) {
-		// 	newMatrix[ row ][ column ] = symbol;
-		// 	setMatrix(newMatrix);
-		// }
-		//
-		// if (socket) {
-		// 	gameService.updateGame(socket, newMatrix, id);
-		// 	const [ currentPlayerWon, otherPlayerWon ] = checkGameState(newMatrix);
-		// 	if (currentPlayerWon && otherPlayerWon) {
-		// 		gameService.gameWin(socket, "The Game is a TIE!");
-		// 		alert("The game is a TIE!");
-		// 	} else if (currentPlayerWon && !otherPlayerWon) {
-		// 		gameService.gameWin(socket, "You Lost!");
-		// 		alert("You Won!");
-		// 	}
-		// 	setGameState({ ...gameState, isPlayerTurn: [ false ] });
-		// }
+
+		if (newMatrix[ row ][ column ] === null || newMatrix[ row ][ column ] === null) {
+			newMatrix[ row ][ column ] = symbol;
+			setMatrix(newMatrix);
+		}
+
+		if (socket) {
+			const newBoardsState = gameState.boards.map(board => {
+				if (board.id === id) {
+					return (
+						{
+							...board,
+							isPlayerTurn: false
+						}
+					);
+				} else {
+					return board;
+				}
+			});
+
+			setGameState({ ...gameState, boards: newBoardsState });
+
+			gameService.updateGame(socket, newMatrix, id);
+			const [ currentPlayerWon, otherPlayerWon ] = checkGameState(newMatrix);
+			if (currentPlayerWon && otherPlayerWon) {
+				gameService.gameWin(socket, "The Game is a TIE!");
+				alert("The game is a TIE!");
+			} else if (currentPlayerWon && !otherPlayerWon) {
+				gameService.gameWin(socket, "You Lost!");
+				alert("You Won!");
+			}
+		}
 	};
 
 	const handleGameUpdate = () => {
 		if (socket) {
 			gameService.onGameUpdate(socket, (newMatrix, boardId) => {
 				if (boardId === id) {
+					const newBoardsState = gameState.boards.map(board => {
+						if (board.id === boardId) {
+							return (
+								{
+									...board,
+									isPlayerTurn: true
+								}
+							);
+						} else {
+							return board;
+						}
+					});
+
 					setMatrix(newMatrix);
 					checkGameState(newMatrix);
-					setGameState({ ...gameState, isPlayerTurn: [ true ] });
+					setGameState({ ...gameState, boards: newBoardsState });
 				}
 			});
 		}
@@ -141,7 +168,7 @@ const GameBoard = (props: Props) => {
 					matrix.map((row, rowIdx) => {
 						return (
 							row.map((col, colIdx) => (
-								<Cell key={ rowIdx + colIdx } content={ col } updateGameMatrix={ () => updateGameMatrix(colIdx, rowIdx, gameState.avatarId) }/>
+								<Cell key={ rowIdx + colIdx } content={ col } updateGameMatrix={ () => updateGameMatrix(colIdx, rowIdx, gameState.avatarId) } boardId={ id }/>
 							))
 						);
 					})

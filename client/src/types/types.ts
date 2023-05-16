@@ -29,7 +29,7 @@ export type GameState = {
 	isPlayerTurn?: boolean[],
 	roomCode: string | null,
 	clientCount: number,
-	boards?: Board[],
+	boards: Board[],
 }
 
 export type Avatar = {

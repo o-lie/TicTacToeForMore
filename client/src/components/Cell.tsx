@@ -7,15 +7,17 @@ import { GameContext } from "src/providers/GameProvider";
 
 type Props = {
 	content: number | null
-	updateGameMatrix: any
+	updateGameMatrix: () => void,
+	boardId: number
 }
 const Cell = (props: Props) => {
 	const { gameState, setGameState } = useContext(GameContext);
 
 	return (
-		<div
+		<button
 			className="cell"
 			onClick={ props.updateGameMatrix }
+			disabled={ !gameState.boards.find(board => board.id === props.boardId)?.isPlayerTurn }
 			key={ props.content }
 		>
 			{
@@ -25,7 +27,7 @@ const Cell = (props: Props) => {
 					:
 					""
 			}
-		</div>
+		</button>
 	);
 };
 
