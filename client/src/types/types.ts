@@ -25,9 +25,11 @@ export type GameState = {
 	isStarted: boolean,
 	hasJoined: boolean,
 	username: string,
-	avatar?: Avatar,
+	avatarId: number,
+	isPlayerTurn?: boolean[],
 	roomCode: string | null,
-	clientCount: number
+	clientCount: number,
+	boards?: Board[],
 }
 
 export type Avatar = {
@@ -36,6 +38,11 @@ export type Avatar = {
 	src: any
 }
 
+export type Board = {
+	id: number,
+	isPlayerTurn: boolean,
+	hasWon: boolean
+}
 export enum AvatarTypeEnum {
 	"APPLE",
 	"PEPPER",
@@ -67,4 +74,11 @@ export type GameContextType = {
 	gameState: GameState,
 	setGameState: (gameState: GameState) => void,
 	setRoomCode?: (roomCode: string | null) => void
+}
+
+export type IPlayMatrix = Array<Array<number | null>>;
+
+export interface IStartGame {
+	start: boolean;
+	symbol: "x" | "o";
 }

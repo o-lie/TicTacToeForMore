@@ -1,17 +1,29 @@
 import { Avatar, Box, Button, List, ListItem, ListItemAvatar, ListItemText, ListSubheader, Typography } from "@mui/material";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { GameContext } from "src/providers/GameProvider";
 import Pepper from "src/assets/images/avatar-1.png";
 import Apple from "src/assets/images/avatar-0.png";
 import Lemon from "src/assets/images/avatar-2.png";
 import socketService from "src/services/socketService";
+import SocketService from "src/services/socketService";
 
 const WaitingRoom = () => {
 	const { gameState, setGameState } = useContext(GameContext);
+	const [ isLoading, setIsLoading ] = useState<boolean>(false);
+
 	const socket = socketService.socket;
 
-	const onSubmit = () => {
-		socket?.emit("startGame");
+	const onSubmit = async () => {
+		setIsLoading(true);
+		await SocketService
+			.startGame()
+			.then(() => {
+				setIsLoading(false);
+			})
+			.catch((err) => {
+				setIsLoading(false);
+				console.log("Error: ", err);
+			});
 	};
 
 	return (
@@ -39,7 +51,7 @@ const WaitingRoom = () => {
 			<Button
 				variant="contained"
 				onClick={ onSubmit }
-				disabled={ !gameState.canStart }
+				disabled={ !gameState.canStart || isLoading }
 			>
 				Rozpocznij grę
 			</Button>

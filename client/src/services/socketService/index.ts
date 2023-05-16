@@ -42,6 +42,13 @@ class SocketService {
 			this.socket?.on("room_join_error", ({ error }) => rj(error));
 		});
 	}
+
+	public async startGame(): Promise<boolean> {
+		return new Promise((rs, rj) => {
+			this.socket?.emit("startGame");
+			this.socket?.on("gameStarted", () => rs(true));
+		});
+	}
 }
 
 export default new SocketService();

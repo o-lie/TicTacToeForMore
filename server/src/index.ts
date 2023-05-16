@@ -78,16 +78,70 @@ io.on("connection", (socket) => {
 			//if chosen room has 3 players start the game
 			io.in(roomCode).emit("updatePlayers", players.filter(player => player.roomCode === roomName), room && room.size === 3);
 		}
+
+		socket.on("startGame", () => {
+			// io.in(roomCode).emit("gameStarted");
+			players.filter(player => player.roomCode === roomCode);
+			players.forEach((player, index) => {
+				if (index === 0) {
+					console.log(player.username + "pierwszy");
+					const boards = [
+						{
+							id: 0,
+							isPlayerTurn: false,
+							hasWon: false
+						},
+						{
+							id: 1,
+							isPlayerTurn: false,
+							hasWon: false
+						}
+					];
+					io.to(player.id).emit("gameStarted", boards);
+
+				} else if (index === 1) {
+					console.log(player.username + "drugi");
+					const boards = [
+						{
+							id: 0,
+							isPlayerTurn: false,
+							hasWon: false
+						},
+						{
+							id: 2,
+							isPlayerTurn: false,
+							hasWon: false
+						}
+					];
+					io.to(player.id).emit("gameStarted", boards);
+
+				} else if (index === 2) {
+					console.log(player.username + "trzeci");
+					const boards = [
+						{
+							id: 1,
+							isPlayerTurn: false,
+							hasWon: false
+						},
+						{
+							id: 2,
+							isPlayerTurn: false,
+							hasWon: false
+						}
+					];
+					io.to(player.id).emit("gameStarted", boards);
+
+				}
+
+			});
+		});
+
+		socket.on("update_game", (matrix, boardId) => {
+			io.in(roomName).emit("on_game_update", matrix, boardId);
+		});
 	});
 
-	socket.on("startGame", () => {
-		io.in(roomName).emit("gameStarted");
-	});
 
-	socket.on("disconnecting", () => {
-
-		// io.in(roomName).emit("updatePlayers", players.filter(player => player.roomCode === roomName));
-	});
 
 	socket.on("disconnect", (reason) => {
 		players = players.filter(player => player.id !== socket.id);

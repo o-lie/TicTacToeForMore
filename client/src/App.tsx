@@ -1,8 +1,7 @@
-import "./App.css";
+import "src/assets/styles/style.scss";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from "src/routes/Root";
 import ErrorPage from "src/routes/ErrorPage";
-import GamePage from "src/routes/GamePage";
 import { useState } from "react";
 import { GameState } from "src/types/types";
 import { GameContext } from "./providers/GameProvider";
@@ -14,18 +13,6 @@ const router = createBrowserRouter([
 		path: "/",
 		element: <Root/>,
 		errorElement: <ErrorPage/>
-	},
-	{
-		path: "/start",
-		element: <div>Zagraj w grę!</div>
-	},
-	{
-		path: "/game",
-		element: <GamePage/>
-	},
-	{
-		path: "/end",
-		element: <div>Gra zakończona!</div>
 	}
 ]);
 
@@ -38,7 +25,8 @@ function App() {
 		hasJoined: false,
 		username: "",
 		roomCode: null,
-		clientCount: 0
+		clientCount: 0,
+		avatarId: 0
 	});
 
 	const theme = createTheme({

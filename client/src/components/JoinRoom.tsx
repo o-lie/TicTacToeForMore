@@ -7,6 +7,7 @@ import SocketService from "src/services/socketService";
 import { isEmptyString } from "src/utils/typeguards";
 
 type Data = {
+	id: string,
 	username: string,
 	roomCode: string,
 	avatarId: number
@@ -20,6 +21,7 @@ const JoinRoom = () => {
 	const [ isFormDataValid, toggleIsFormDataValid ] = useState<boolean>(false);
 	const [ data, setData ] = useState<Data>(
 		{
+			id: "",
 			username: "",
 			roomCode: "",
 			avatarId: 0
@@ -41,7 +43,7 @@ const JoinRoom = () => {
 		await SocketService
 			.joinRoom(data)
 			.then(() => {
-				setGameState({ ...gameState, hasJoined: true, roomCode: data.roomCode, username: data.username });
+				setGameState({ ...gameState, hasJoined: true, roomCode: data.roomCode, username: data.username, avatarId: data.avatarId });
 				showSnackbar("Dołączyłeś do gry!", "success");
 				setIsLoading(false);
 			})
@@ -55,7 +57,6 @@ const JoinRoom = () => {
 	useEffect(() => {
 		validateFormData();
 	}, [ data ]);
-
 
 	return (
 

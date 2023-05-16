@@ -10,11 +10,10 @@ const defaultState: GameContextType = {
 		isStarted: false,
 		username: "",
 		roomCode: null,
-		clientCount: 0
+		clientCount: 0,
+		avatarId: 0
 	},
 	setGameState: () => {
-	},
-	setRoomCode: () => {
 	}
 };
 export const GameContext = createContext<GameContextType>(defaultState);
