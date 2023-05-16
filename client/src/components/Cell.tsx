@@ -21,7 +21,7 @@ const Cell = (props: Props) => {
 			{
 				props.content !== null
 					?
-					<Avatar src={ gameState.avatarId === 0 ? Apple : (gameState.avatarId === 1 ? Lemon : Pepper) }></Avatar>
+					<Avatar src={ props.content === 0 ? Apple : (props.content === 1 ? Lemon : Pepper) }></Avatar>
 					:
 					""
 			}
