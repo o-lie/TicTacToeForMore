@@ -11,7 +11,7 @@ const Game = () => {
 
 			<Stack direction={ "row" } spacing={ 2 }>
 				{
-					gameState.boards?.map(board => <GameBoard key={ board.id } id={ board.id }/>)
+					gameState.boards?.map(board => <GameBoard key={ board.id } id={ board.id } hasWon={ board.hasWon } hasEnded={ board.hasEnded } isPlayerTurn={ board.isPlayerTurn }/>)
 				}
 			</Stack>
 		</>

@@ -3,20 +3,20 @@ import { IPlayMatrix } from "src/types/types";
 
 class GameService {
 
-	public async updateGame(socket: Socket, gameMatrix: IPlayMatrix, boardId: number) {
-		socket.emit("updateGame", { matrix: gameMatrix, boardId: boardId });
+	public async updateBoard(socket: Socket, gameMatrix: IPlayMatrix, boardId: number) {
+		socket.emit("updateBoard", { matrix: gameMatrix, boardId: boardId });
 	}
 
-	public async onGameUpdate(socket: Socket, listener: (matrix: IPlayMatrix, boardId: number) => void) {
-		socket.on("onGameUpdate", ({ matrix, boardId }) => listener(matrix, boardId));
+	public async onUpdateBoard(socket: Socket, listener: (matrix: IPlayMatrix, boardId: number) => void) {
+		socket.on("onUpdateBoard", ({ matrix, boardId }) => listener(matrix, boardId));
 	}
 
-	public async gameWin(socket: Socket, message: string) {
-		socket.emit("game_win", { message });
+	public async endGame(socket: Socket, boardId: number, isTie: boolean) {
+		socket.emit("endGame", { boardId, isTie });
 	}
 
-	public async OnGameWin(socket: Socket, listener: (message: string) => void) {
-		socket.on("on_game_win", ({ message }) => listener(message));
+	public async onEndGame(socket: Socket, listener: (boardId: number, isTie: boolean) => void) {
+		socket.on("onEndGame", ({ boardId, isTie }) => listener(boardId, isTie));
 	}
 }
 

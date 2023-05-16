@@ -62,7 +62,6 @@ const Root = () => {
 		});
 	});
 
-	console.log(gameState);
 	return (
 		<>
 			<Modal

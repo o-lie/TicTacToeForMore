@@ -16,12 +16,14 @@ const defaultState: GameContextType = {
 			{
 				id: 0,
 				isPlayerTurn: false,
-				hasWon: false
+				hasWon: false,
+				hasEnded: false
 			},
 			{
 				id: 1,
 				isPlayerTurn: false,
-				hasWon: false
+				hasWon: false,
+				hasEnded: false
 			}
 		]
 	},

@@ -88,12 +88,14 @@ io.on("connection", (socket) => {
 						{
 							id: 0,
 							isPlayerTurn: true,
-							hasWon: false
+							hasWon: false,
+							hasEnded: false
 						},
 						{
 							id: 1,
 							isPlayerTurn: false,
-							hasWon: false
+							hasWon: false,
+							hasEnded: false
 						}
 					];
 					io.to(player.id).emit("gameStarted", boards);
@@ -104,12 +106,14 @@ io.on("connection", (socket) => {
 						{
 							id: 0,
 							isPlayerTurn: false,
-							hasWon: false
+							hasWon: false,
+							hasEnded: false
 						},
 						{
 							id: 2,
 							isPlayerTurn: true,
-							hasWon: false
+							hasWon: false,
+							hasEnded: false
 						}
 					];
 					io.to(player.id).emit("gameStarted", boards);
@@ -120,12 +124,14 @@ io.on("connection", (socket) => {
 						{
 							id: 1,
 							isPlayerTurn: true,
-							hasWon: false
+							hasWon: false,
+							hasEnded: false
 						},
 						{
 							id: 2,
 							isPlayerTurn: false,
-							hasWon: false
+							hasWon: false,
+							hasEnded: false
 						}
 					];
 					io.to(player.id).emit("gameStarted", boards);
@@ -135,8 +141,12 @@ io.on("connection", (socket) => {
 			});
 		});
 
-		socket.on("updateGame", (matrix, boardId) => {
-			socket.to(roomName).emit("onGameUpdate", matrix, boardId);
+		socket.on("updateBoard", (matrix, boardId) => {
+			socket.to(roomCode).emit("onUpdateBoard", matrix, boardId);
+		});
+
+		socket.on("endGame", (boardId, isGameATie) => {
+			socket.to(roomCode).emit("onEndGame", boardId, isGameATie);
 		});
 	});
 

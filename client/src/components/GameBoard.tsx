@@ -7,75 +7,55 @@ import { Stack, Typography } from "@mui/material";
 import Cell from "src/components/Cell";
 
 type Props = {
-	id: number
+	id: number,
+	hasEnded: boolean,
+	hasWon: boolean,
+	isPlayerTurn: boolean
 }
-
 const GameBoard = (props: Props) => {
-	const [ matrix, setMatrix ] = useState<IPlayMatrix>([
-		[ null, null, null ],
-		[ null, null, null ],
-		[ null, null, null ]
-	]);
+	const [ matrix, setMatrix ] = useState<IPlayMatrix>(
+		[ null, null, null, null, null, null, null, null, null ]
+	);
+
+	const [ isTie, setIsTie ] = useState(false);
 
 	const { gameState, setGameState } = useContext(GameContext);
 
 	const socket = socketService.socket;
 
-	const { id } = props;
+	const {
+		id,
+		hasEnded,
+		hasWon,
+		isPlayerTurn
+	} = props;
 	const checkGameState = (matrix: IPlayMatrix) => {
-		for (let i = 0 ; i < matrix.length ; i++) {
-			let row = [];
-			for (let j = 0 ; j < matrix[ i ].length ; j++) {
-				row.push(matrix[ i ][ j ]);
-			}
+		const match = [ gameState.avatarId, gameState.avatarId, gameState.avatarId ].toString();
 
-			if (row.every((value) => value && value === gameState.avatarId)) {
-				return [ true, false ];
-			} else if (row.every((value) => value && value !== gameState.avatarId)) {
-				return [ false, true ];
-			}
-		}
+		const possibleWins = [
+			[ matrix[ 0 ], matrix[ 1 ], matrix[ 2 ] ].toString(),
+			[ matrix[ 3 ], matrix[ 4 ], matrix[ 5 ] ].toString(),
+			[ matrix[ 6 ], matrix[ 7 ], matrix[ 8 ] ].toString(),
+			[ matrix[ 0 ], matrix[ 3 ], matrix[ 6 ] ].toString(),
+			[ matrix[ 1 ], matrix[ 4 ], matrix[ 7 ] ].toString(),
+			[ matrix[ 2 ], matrix[ 5 ], matrix[ 8 ] ].toString(),
+			[ matrix[ 0 ], matrix[ 4 ], matrix[ 8 ] ].toString(),
+			[ matrix[ 2 ], matrix[ 4 ], matrix[ 6 ] ].toString()
+		];
 
-		for (let i = 0 ; i < matrix.length ; i++) {
-			let column = [];
-			for (let j = 0 ; j < matrix[ i ].length ; j++) {
-				column.push(matrix[ j ][ i ]);
-			}
-			if (column.every((value) => value && value === gameState.avatarId)) {
-				return [ true, false ];
-			} else if (column.every((value) => value && value !== gameState.avatarId)) {
-				return [ false, true ];
-			}
-		}
-		if (matrix[ 1 ][ 1 ]) {
-			if (matrix[ 0 ][ 0 ] === matrix[ 1 ][ 1 ] && matrix[ 2 ][ 2 ] === matrix[ 1 ][ 1 ]) {
-				if (matrix[ 1 ][ 1 ] === gameState.avatarId) {
-					return [ true, false ];
-				} else {
-					return [ false, true ];
-				}
-			}
-
-			if (matrix[ 2 ][ 0 ] === matrix[ 1 ][ 1 ] && matrix[ 0 ][ 2 ] === matrix[ 1 ][ 1 ]) {
-				if (matrix[ 1 ][ 1 ] === gameState.avatarId) {
-					return [ true, false ];
-				} else {
-					return [ false, true ];
-				}
-			}
-		}
-
-		if (matrix.every((m) => m.every((v) => v !== null))) {
+		if (possibleWins.includes(match)) {
+			return [ true, false ];
+		} else if (!matrix.includes(null)) {
 			return [ true, true ];
+		} else {
+			return [ false, false ];
 		}
-		return [ false, false ];
 	};
-
-	const updateGameMatrix = (column: number, row: number, symbol: number) => {
+	const updateGameMatrix = (index: number, symbol: number) => {
 		const newMatrix = [ ...matrix ];
 
-		if (newMatrix[ row ][ column ] === null || newMatrix[ row ][ column ] === null) {
-			newMatrix[ row ][ column ] = symbol;
+		if (newMatrix[ index ] === null) {
+			newMatrix[ index ] = symbol;
 			setMatrix(newMatrix);
 		}
 
@@ -95,21 +75,42 @@ const GameBoard = (props: Props) => {
 
 			setGameState({ ...gameState, boards: newBoardsState });
 
-			gameService.updateGame(socket, newMatrix, id);
+			gameService.updateBoard(socket, newMatrix, id);
+
+			//check board
 			const [ currentPlayerWon, otherPlayerWon ] = checkGameState(newMatrix);
-			if (currentPlayerWon && otherPlayerWon) {
-				gameService.gameWin(socket, "The Game is a TIE!");
-				alert("The game is a TIE!");
-			} else if (currentPlayerWon && !otherPlayerWon) {
-				gameService.gameWin(socket, "You Lost!");
-				alert("You Won!");
+
+			console.log(currentPlayerWon);
+			if (currentPlayerWon) {
+				if (otherPlayerWon) {
+					setIsTie(true);
+				}
+				setGameState(
+					{
+						...gameState,
+						boards: gameState.boards.map(board => {
+							if (board.id === id) {
+								return (
+									{
+										...board,
+										hasWon: true,
+										hasEnded: true
+									}
+								);
+							} else {
+								return board;
+							}
+						})
+					}
+				);
+				gameService.endGame(socket, id, currentPlayerWon && otherPlayerWon);
 			}
 		}
 	};
 
 	const handleGameUpdate = () => {
 		if (socket) {
-			gameService.onGameUpdate(socket, (newMatrix, boardId) => {
+			gameService.onUpdateBoard(socket, (newMatrix, boardId) => {
 				if (boardId === id) {
 					const newBoardsState = gameState.boards.map(board => {
 						if (board.id === boardId) {
@@ -123,58 +124,68 @@ const GameBoard = (props: Props) => {
 							return board;
 						}
 					});
-
 					setMatrix(newMatrix);
-					checkGameState(newMatrix);
 					setGameState({ ...gameState, boards: newBoardsState });
 				}
 			});
 		}
 	};
 
-	const handleGameWin = () => {
+	const handleGameEnd = () => {
 		if (socket) {
-			gameService.OnGameWin(socket, (message) => {
-				console.log("Here", message);
-				setGameState({ ...gameState, isPlayerTurn: [ false ] });
-				alert(message);
+			gameService.onEndGame(socket, (boardId, isGameATie) => {
+				if (boardId === id) {
+					if (isGameATie) {
+						setIsTie(isGameATie);
+					}
+					const newBoardsState = gameState.boards.map(board => {
+						if (board.id === boardId) {
+							return (
+								{
+									...board,
+									hasWon: isGameATie,
+									hasEnded: true
+								}
+							);
+						} else {
+							return board;
+						}
+					});
+					setGameState({ ...gameState, boards: newBoardsState });
+				}
 			});
 		}
 	};
 
-	socket?.on("updateBoard", (matrix) => {
-		setMatrix(matrix);
-	});
-
 	useEffect(() => {
 		handleGameUpdate();
-		handleGameWin();
+		handleGameEnd();
 	}, []);
 
-	console.log(gameState);
 	return (
-		<Stack direction={ "column" }>
-			<Typography variant={ "h1" }>ID: { id }</Typography>
+		<>
 			{
-				gameState.boards?.map(board => {
-					return (
-						board.id === id &&
-                        <Typography>{ board.isPlayerTurn ? "Twoja kolej" : "Kolej przeciwnika" }</Typography>
-					);
-				})
+				hasEnded
+					?
+					<Typography variant={ "h1" }>{ isTie ? "Remis" : hasWon ? "Wygrałeś!" : "Przegrałeś :(" }</Typography>
+					:
+					<Stack direction={ "column" }>
+						<Typography variant={ "h1" }>ID: { id }</Typography>
+						<Typography>{ isPlayerTurn ? "Twoja kolej" : "Kolej przeciwnika" }</Typography>
+
+						<div className="board">
+							{
+								matrix.map((cell, cellIndex) => {
+									return (
+										<Cell key={ cellIndex } content={ cell } updateGameMatrix={ () => updateGameMatrix(cellIndex, gameState.avatarId) } boardId={ id }/>
+									);
+								})
+							}
+						</div>
+					</Stack>
 			}
-			<div className="board">
-				{
-					matrix.map((row, rowIdx) => {
-						return (
-							row.map((col, colIdx) => (
-								<Cell key={ rowIdx + colIdx } content={ col } updateGameMatrix={ () => updateGameMatrix(colIdx, rowIdx, gameState.avatarId) } boardId={ id }/>
-							))
-						);
-					})
-				}
-			</div>
-		</Stack>
+
+		</>
 	);
 };
 
