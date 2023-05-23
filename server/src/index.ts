@@ -6,6 +6,8 @@ import cors from "cors";
 
 config();
 
+export type BoardMatrix = Array<number | null>;
+
 export type Player = {
 	id: string,
 	username: string,
@@ -87,12 +89,14 @@ io.on("connection", (socket) => {
 					const boards = [
 						{
 							id: 0,
+							matrix: [ null, null, null, null, null, null, null, null, null ],
 							isPlayerTurn: true,
 							hasWon: false,
 							hasEnded: false
 						},
 						{
 							id: 1,
+							matrix: [ null, null, null, null, null, null, null, null, null ],
 							isPlayerTurn: false,
 							hasWon: false,
 							hasEnded: false
@@ -105,12 +109,14 @@ io.on("connection", (socket) => {
 					const boards = [
 						{
 							id: 0,
+							matrix: [ null, null, null, null, null, null, null, null, null ],
 							isPlayerTurn: false,
 							hasWon: false,
 							hasEnded: false
 						},
 						{
 							id: 2,
+							matrix: [ null, null, null, null, null, null, null, null, null ],
 							isPlayerTurn: true,
 							hasWon: false,
 							hasEnded: false
@@ -123,29 +129,31 @@ io.on("connection", (socket) => {
 					const boards = [
 						{
 							id: 1,
+							matrix: [ null, null, null, null, null, null, null, null, null ],
 							isPlayerTurn: true,
 							hasWon: false,
 							hasEnded: false
 						},
 						{
 							id: 2,
+							matrix: [ null, null, null, null, null, null, null, null, null ],
 							isPlayerTurn: false,
 							hasWon: false,
 							hasEnded: false
 						}
 					];
 					io.to(player.id).emit("gameStarted", boards);
-
 				}
 
 			});
 		});
 
-		socket.on("updateBoard", (matrix, boardId) => {
+		socket.on("updateBoard", (matrix: BoardMatrix, boardId: number) => {
+			console.log(matrix, boardId);
 			socket.to(roomCode).emit("onUpdateBoard", matrix, boardId);
 		});
 
-		socket.on("endGame", (boardId, isGameATie) => {
+		socket.on("endGame", (boardId: number, isGameATie: boolean) => {
 			socket.to(roomCode).emit("onEndGame", boardId, isGameATie);
 		});
 	});

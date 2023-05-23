@@ -18,6 +18,7 @@ const WaitingRoom = () => {
 		await SocketService
 			.startGame()
 			.then(() => {
+				setGameState({ ...gameState, isStarted: true });
 				setIsLoading(false);
 			})
 			.catch((err) => {

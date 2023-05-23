@@ -12,20 +12,6 @@ const defaultState: GameContextType = {
 		roomCode: null,
 		clientCount: 0,
 		avatarId: 0,
-		boards: [
-			{
-				id: 0,
-				isPlayerTurn: false,
-				hasWon: false,
-				hasEnded: false
-			},
-			{
-				id: 1,
-				isPlayerTurn: false,
-				hasWon: false,
-				hasEnded: false
-			}
-		]
 	},
 	setGameState: () => {
 	}

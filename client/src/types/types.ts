@@ -28,8 +28,7 @@ export type GameState = {
 	avatarId: number,
 	isPlayerTurn?: boolean[],
 	roomCode: string | null,
-	clientCount: number,
-	boards: Board[],
+	clientCount: number
 }
 
 export type Avatar = {
@@ -38,12 +37,16 @@ export type Avatar = {
 	src: any
 }
 
+export type BoardMatrix = Array<number | null>;
+
 export type Board = {
 	id: number,
+	matrix: BoardMatrix,
 	isPlayerTurn: boolean,
 	hasWon: boolean,
 	hasEnded: boolean
 }
+
 export enum AvatarTypeEnum {
 	"APPLE",
 	"PEPPER",
@@ -77,4 +80,3 @@ export type GameContextType = {
 	setRoomCode?: (roomCode: string | null) => void
 }
 
-export type IPlayMatrix = Array<number | null>;

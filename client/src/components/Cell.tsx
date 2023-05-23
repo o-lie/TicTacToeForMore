@@ -2,28 +2,37 @@ import { Avatar } from "@mui/material";
 import Apple from "src/assets/images/avatar-0.png";
 import Lemon from "src/assets/images/avatar-2.png";
 import Pepper from "src/assets/images/avatar-1.png";
-import React, { useContext } from "react";
-import { GameContext } from "src/providers/GameProvider";
+import React from "react";
 
 type Props = {
-	content: number | null
-	updateGameMatrix: () => void,
-	boardId: number
+	content: number | null,
+	isPlayerTurn: boolean,
+	hasEnded: boolean,
+	updateGameMatrix: (cellId: number, avatarId: number) => void,
+	id: number,
+	avatarId: number
 }
 const Cell = (props: Props) => {
-	const { gameState, setGameState } = useContext(GameContext);
+	const {
+		content,
+		isPlayerTurn,
+		hasEnded,
+		updateGameMatrix,
+		id,
+		avatarId
+	} = props;
 
 	return (
 		<button
 			className="cell"
-			onClick={ props.updateGameMatrix }
-			disabled={ !gameState.boards.find(board => board.id === props.boardId)?.isPlayerTurn }
-			key={ props.content }
+			onClick={ () => updateGameMatrix(id, avatarId) }
+			disabled={ !isPlayerTurn || hasEnded }
+			key={ content }
 		>
 			{
-				props.content !== null
+				content !== null
 					?
-					<Avatar src={ props.content === 0 ? Apple : (props.content === 1 ? Lemon : Pepper) }></Avatar>
+					<Avatar src={ content === 0 ? Apple : (content === 1 ? Lemon : Pepper) }></Avatar>
 					:
 					""
 			}

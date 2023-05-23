@@ -37,10 +37,6 @@ const Root = () => {
 	const socket = socketService.socket;
 
 	useEffect(() => {
-		socket?.on("gameStarted", (boards) => {
-			setGameState({ ...gameState, isStarted: true, boards: boards });
-			showSnackbar(`Gra rozpoczęta.`, "success");
-		});
 
 		socket?.on("socketDisconnected", (reason) => {
 			setGameState({ ...gameState, isConnected: false, canStart: false, isStarted: false });
@@ -61,6 +57,8 @@ const Root = () => {
 			showSnackbar(`Rozłączono z serwerem.`, "error");
 		});
 	});
+
+	console.log(gameState);
 
 	return (
 		<>
@@ -86,15 +84,13 @@ const Root = () => {
 					<JoinRoom/>
 				</Box>
 			</Modal>
+			<Modal open={ gameState.isConnected && gameState.hasJoined && !gameState.isStarted }>
+				<Box sx={ style }>
+					<WaitingRoom/>
+				</Box>
+			</Modal>
 			<Container>
-				{
-					(gameState.isConnected && gameState.hasJoined && !gameState.isStarted) &&
-                    <WaitingRoom/>
-				}
-				{
-					gameState.isStarted &&
-                    <Game/>
-				}
+				<Game/>
 			</Container>
 		</>
 	);
