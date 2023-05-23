@@ -8,11 +8,7 @@ import Game from "src/components/Game";
 import socketService from "src/services/socketService";
 import JoinRoom from "src/components/JoinRoom";
 import { Player } from "src/types/types";
-
-type Data = {
-	serverAddress: string,
-	username: string
-}
+import Logo from "src/components/Logo";
 
 const style = {
 	position: "absolute" as "absolute",
@@ -58,8 +54,6 @@ const Root = () => {
 		});
 	});
 
-	console.log(gameState);
-
 	return (
 		<>
 			<Modal
@@ -67,6 +61,7 @@ const Root = () => {
 				aria-labelledby="modal-connect-title"
 			>
 				<Box sx={ style }>
+					<Logo/>
 					<Typography id="modal-connect-title" variant="h4" component="h2" align="center">
 						Połącz się z serwerem
 					</Typography>
@@ -75,10 +70,11 @@ const Root = () => {
 			</Modal>
 			<Modal
 				open={ gameState.isConnected && !gameState.hasJoined }
-				aria-labelledby="modal-connect-title"
+				aria-labelledby="modal-join-title"
 			>
 				<Box sx={ style }>
-					<Typography id="modal-connect-title" variant="h4" component="h2" align="center">
+					<Logo/>
+					<Typography id="modal-join-title" variant="h4" component="h2" align="center">
 						Dołącz do gry
 					</Typography>
 					<JoinRoom/>
@@ -86,6 +82,10 @@ const Root = () => {
 			</Modal>
 			<Modal open={ gameState.isConnected && gameState.hasJoined && !gameState.isStarted }>
 				<Box sx={ style }>
+					<Logo/>
+					<Typography id="modal-join-title" variant="h4" component="h2" align="center">
+						Poczekaj na wszystkich graczy
+					</Typography>
 					<WaitingRoom/>
 				</Box>
 			</Modal>

@@ -1,7 +1,6 @@
-import { Avatar } from "@mui/material";
-import Apple from "src/assets/images/avatar-0.png";
-import Lemon from "src/assets/images/avatar-2.png";
-import Pepper from "src/assets/images/avatar-1.png";
+import Apple from "src/assets/images/apple.png";
+import Lemon from "src/assets/images/lemon.png";
+import Pepper from "src/assets/images/pepper.png";
 import React from "react";
 
 type Props = {
@@ -32,7 +31,7 @@ const Cell = (props: Props) => {
 			{
 				content !== null
 					?
-					<Avatar src={ content === 0 ? Apple : (content === 1 ? Lemon : Pepper) }></Avatar>
+					<img style={ { width: "100%" } } src={ content === 0 ? Apple : (content === 1 ? Lemon : Pepper) }></img>
 					:
 					""
 			}
