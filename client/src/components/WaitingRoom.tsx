@@ -33,7 +33,7 @@ const WaitingRoom = () => {
 					gameState.allPlayers &&
 					gameState.allPlayers.map(player => {
 						return (
-							<ListItem key={ player.id }>
+							<ListItem key={ player.id } style={ {} }>
 								<ListItemAvatar>
 									<Avatar src={ player.avatarId === 0 ? Apple : (player.avatarId === 1 ? Lemon : Pepper) }></Avatar>
 								</ListItemAvatar>

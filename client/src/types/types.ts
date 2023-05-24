@@ -1,5 +1,4 @@
 import { AlertColor } from "@mui/material";
-import Pepper from "src/assets/images/avatar-1.png";
 
 export type EnumDictionary<T extends string | symbol | number, U> = {
 	[K in T]: U;
@@ -52,27 +51,6 @@ export enum AvatarTypeEnum {
 	"PEPPER",
 	"LEMON"
 }
-
-export const avatarDictionary: EnumDictionary<AvatarTypeEnum, Avatar> = {
-	[ AvatarTypeEnum.PEPPER ]:
-		{
-			name: "Papryka",
-			type: AvatarTypeEnum.PEPPER,
-			src: Pepper
-		},
-	[ AvatarTypeEnum.APPLE ]:
-		{
-			name: "Jabłko",
-			type: AvatarTypeEnum.APPLE,
-			src: Pepper
-		},
-	[ AvatarTypeEnum.LEMON ]:
-		{
-			name: "Cytryna",
-			type: AvatarTypeEnum.LEMON,
-			src: Pepper
-		}
-};
 
 export type GameContextType = {
 	gameState: GameState,

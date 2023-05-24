@@ -1,0 +1,33 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+        d="M80 452C80 429.909 97.908 412 120 412H60C37.909 412 20 429.909 20 452C20 474.091 37.908 492 60 492H120C97.909 492 80 474.091 80 452Z"
+        fill="#CEE1F2" />
+    <path
+        d="M256 100C278.091 100 296 82.0914 296 60C296 37.9086 278.091 20 256 20C233.909 20 216 37.9086 216 60C216 82.0914 233.909 100 256 100Z"
+        stroke="#A677DD" stroke-width="40" stroke-miterlimit="10" stroke-linecap="round"
+        stroke-linejoin="round" />
+    <path
+        d="M296 220H216C193.909 220 176 202.091 176 180C176 157.909 193.909 140 216 140H296C318.091 140 336 157.909 336 180C336 202.091 318.091 220 296 220Z"
+        stroke="#A677DD" stroke-width="40" stroke-miterlimit="10" stroke-linecap="round"
+        stroke-linejoin="round" />
+    <path
+        d="M412 372C434.091 372 452 354.091 452 332C452 309.909 434.091 292 412 292C389.909 292 372 309.909 372 332C372 354.091 389.909 372 412 372Z"
+        stroke="#A677DD" stroke-width="40" stroke-miterlimit="10" stroke-linecap="round"
+        stroke-linejoin="round" />
+    <path
+        d="M452 492H372C349.909 492 332 474.091 332 452C332 429.909 349.909 412 372 412H452C474.091 412 492 429.909 492 452C492 474.091 474.091 492 452 492Z"
+        stroke="#A677DD" stroke-width="40" stroke-miterlimit="10" stroke-linecap="round"
+        stroke-linejoin="round" />
+    <path
+        d="M100 372C122.091 372 140 354.091 140 332C140 309.909 122.091 292 100 292C77.9086 292 60 309.909 60 332C60 354.091 77.9086 372 100 372Z"
+        stroke="#A677DD" stroke-width="40" stroke-miterlimit="10" stroke-linecap="round"
+        stroke-linejoin="round" />
+    <path
+        d="M140 492H60C37.909 492 20 474.091 20 452C20 429.909 37.909 412 60 412H140C162.091 412 180 429.909 180 452C180 474.091 162.091 492 140 492Z"
+        stroke="#A677DD" stroke-width="40" stroke-miterlimit="10" stroke-linecap="round"
+        stroke-linejoin="round" />
+    <path d="M256 292V332" stroke="#77DDDA" stroke-width="40" stroke-miterlimit="10"
+        stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M216 332H296" stroke="#77DDDA" stroke-width="40" stroke-miterlimit="10"
+        stroke-linecap="round" stroke-linejoin="round" />
+</svg>

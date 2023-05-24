@@ -1,4 +1,3 @@
-import "src/assets/styles/style.scss";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from "src/routes/Root";
 import ErrorPage from "src/routes/ErrorPage";

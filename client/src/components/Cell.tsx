@@ -23,7 +23,7 @@ const Cell = (props: Props) => {
 
 	return (
 		<button
-			className="cell"
+			className={ `cell ${ (!isPlayerTurn || hasEnded) ? "cell--disabled" : "" }` }
 			onClick={ () => updateGameMatrix(id, avatarId) }
 			disabled={ !isPlayerTurn || hasEnded }
 			key={ content }

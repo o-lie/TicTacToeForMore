@@ -1,0 +1,48 @@
+.header {
+	padding: 20px 30px;
+	display: flex;
+	justify-content: space-between;
+
+	@media (max-width: 750px) {
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	&__info {
+		display: flex;
+		justify-content: end;
+		align-items: center;
+		gap: 2rem;
+
+		@media (max-width: 750px) {
+			justify-content: unset;
+		}
+	}
+
+	&__info-box {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 1rem;
+
+		svg {
+			height: 30px;
+			width: auto;
+		}
+	}
+
+	&__text-wrapper {
+		display: flex;
+		flex-direction: column;
+	}
+
+	&__text-label {
+		font-size: 12px;
+		font-weight: 300;
+		color: grey;
+	}
+
+	&__text {
+		font-weight: 500;
+	}
+}

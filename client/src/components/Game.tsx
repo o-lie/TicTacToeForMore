@@ -1,5 +1,4 @@
 import GameBoard from "src/components/GameBoard";
-import { Stack } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { GameContext } from "src/providers/GameProvider";
 import { Board, BoardMatrix } from "src/types/types";
@@ -135,7 +134,7 @@ const Game = () => {
 
 	return (
 		<>
-			<Stack direction={ "row" } spacing={ 2 }>
+			<div className="boards">
 				{
 					boardsState?.map(board =>
 						<GameBoard
@@ -149,7 +148,7 @@ const Game = () => {
 						/>
 					)
 				}
-			</Stack>
+			</div>
 		</>
 	);
 };

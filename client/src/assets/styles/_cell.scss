@@ -1,9 +1,28 @@
 .cell {
-	border: 1px solid black;
-	//min-width: 170px;
+	border: unset;
 	padding: 2rem;
 	aspect-ratio: 1/1;
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	float: left;
+	font-size: 3em;
+	background-color: white;
+	cursor: pointer;
+
+	&:hover {
+		background-color: #dbc1ef;
+	}
+
+	&--disabled {
+		&:hover {
+			cursor: not-allowed;
+			background-color: white;
+		}
+	}
+
+	img {
+		object-fit: contain;
+		height: 100%;
+	}
 }

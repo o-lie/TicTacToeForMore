@@ -51,7 +51,6 @@ const GameBoard = (props: Props) => {
 					<Typography variant={ "h1" }>{ isTie ? "Remis" : hasWon ? "Wygrałeś!" : "Przegrałeś :(" }</Typography>
 					:
 					<Stack direction={ "column" }>
-						<Typography variant={ "h1" }>ID: { id }</Typography>
 						<Typography>{ isPlayerTurn ? "Twoja kolej" : "Kolej przeciwnika" }</Typography>
 
 						<div className="board">

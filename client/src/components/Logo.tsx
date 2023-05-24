@@ -1,8 +1,11 @@
 import LogoSrc from "src/assets/images/logo.png";
 
-const Logo = () => {
+type Props = {
+	styles?: React.CSSProperties
+}
+const Logo = (props: Props) => {
 	return (
-		<img src={ LogoSrc } style={ { width: "140px", margin: "0 auto" } }/>
+		<img src={ LogoSrc } style={ props.styles }/>
 	);
 };
 
