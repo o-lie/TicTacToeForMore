@@ -42,6 +42,7 @@ export type Board = {
 	id: number,
 	matrix: BoardMatrix,
 	isPlayerTurn: boolean,
+	isTie: boolean,
 	hasWon: boolean,
 	hasEnded: boolean
 }

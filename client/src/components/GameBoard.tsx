@@ -1,5 +1,4 @@
-import React, { useContext, useState } from "react";
-import socketService from "../services/socketService";
+import React, { useContext } from "react";
 import { BoardMatrix } from "src/types/types";
 import { GameContext } from "src/providers/GameProvider";
 import { Stack, Typography } from "@mui/material";
@@ -9,6 +8,7 @@ type Props = {
 	id: number,
 	matrix: BoardMatrix,
 	isPlayerTurn: boolean,
+	isTie: boolean,
 	hasWon: boolean,
 	hasEnded: boolean,
 	updateMatrix: (newMatrix: BoardMatrix, boardId: number) => void
@@ -19,20 +19,13 @@ const GameBoard = (props: Props) => {
 		id,
 		matrix,
 		isPlayerTurn,
+		isTie,
 		hasWon,
 		hasEnded,
 		updateMatrix
 	} = props;
 
-	// const [ matrix, setMatrix ] = useState<BoardMatrix>(
-	// 	[ null, null, null, null, null, null, null, null, null ]
-	// );
-
-	const [ isTie, setIsTie ] = useState(false);
-
 	const { gameState, setGameState } = useContext(GameContext);
-
-	const socket = socketService.socket;
 
 	const updateGameMatrix = (index: number, symbol: number) => {
 		const newMatrix = [ ...matrix ];

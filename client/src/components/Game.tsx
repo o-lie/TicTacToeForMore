@@ -65,7 +65,7 @@ const Game = () => {
 
 		const [ currentPlayerWon, otherPlayerWon ] = checkGameState(newMatrix);
 
-		if (currentPlayerWon) {
+		if (currentPlayerWon && !otherPlayerWon) {
 			setBoardsState(prevState =>
 				prevState?.map(prevBoard => {
 					if (prevBoard.id === boardId) {
@@ -73,6 +73,25 @@ const Game = () => {
 							{
 								...prevBoard,
 								hasWon: true,
+								hasEnded: true,
+								isPlayerTurn: false
+							}
+						);
+					} else {
+						return prevBoard;
+					}
+				})
+			);
+			socket?.emit("endGame", boardId, (currentPlayerWon && otherPlayerWon));
+		} else if (currentPlayerWon && otherPlayerWon) {
+			setBoardsState(prevState =>
+				prevState?.map(prevBoard => {
+					if (prevBoard.id === boardId) {
+						return (
+							{
+								...prevBoard,
+								hasWon: false,
+								isTie: true,
 								hasEnded: true,
 								isPlayerTurn: false
 							}
@@ -114,7 +133,7 @@ const Game = () => {
 						return (
 							{
 								...prevBoard,
-								hasWon: isGameATie,
+								isTie: isGameATie,
 								hasEnded: true,
 								isPlayerTurn: false
 							}
@@ -141,6 +160,7 @@ const Game = () => {
 							key={ board.id }
 							id={ board.id }
 							matrix={ board.matrix }
+							isTie={ board.isTie }
 							isPlayerTurn={ board.isPlayerTurn }
 							hasWon={ board.hasWon }
 							hasEnded={ board.hasEnded }
