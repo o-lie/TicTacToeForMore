@@ -14,7 +14,8 @@ export type Player = {
 	id: string,
 	username: string,
 	avatarId: number,
-	roomCode: string
+	roomCode: string,
+	boardIds: number[]
 }
 
 export type GameState = {
@@ -30,12 +31,6 @@ export type GameState = {
 	clientCount: number
 }
 
-export type Avatar = {
-	type: AvatarTypeEnum,
-	name: string,
-	src: any
-}
-
 export type BoardMatrix = Array<number | null>;
 
 export type Board = {
@@ -47,15 +42,8 @@ export type Board = {
 	hasEnded: boolean
 }
 
-export enum AvatarTypeEnum {
-	"APPLE",
-	"PEPPER",
-	"LEMON"
-}
-
 export type GameContextType = {
 	gameState: GameState,
 	setGameState: (gameState: GameState) => void,
-	setRoomCode?: (roomCode: string | null) => void
 }
 

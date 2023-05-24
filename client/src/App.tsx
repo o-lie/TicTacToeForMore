@@ -6,6 +6,7 @@ import { GameState } from "src/types/types";
 import { GameContext } from "./providers/GameProvider";
 import SnackbarProvider from "./providers/SnackbarProvider";
 import { createTheme, ThemeProvider } from "@mui/material";
+import { initialGameState } from "src/utils/constants";
 
 const router = createBrowserRouter([
 	{
@@ -16,17 +17,7 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-	const [ gameState, setGameState ] = useState<GameState>({
-		allPlayers: [],
-		isConnected: false,
-		canStart: false,
-		isStarted: false,
-		hasJoined: false,
-		username: "",
-		roomCode: null,
-		clientCount: 0,
-		avatarId: 0
-	});
+	const [ gameState, setGameState ] = useState<GameState>(initialGameState);
 
 	const theme = createTheme({
 		palette: {

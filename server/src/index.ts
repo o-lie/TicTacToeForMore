@@ -11,6 +11,7 @@ export type BoardMatrix = Array<number | null>;
 export type Player = {
 	id: string,
 	username: string,
+	boardIds: number[],
 	avatarId: number,
 	roomCode: string
 }
@@ -70,28 +71,48 @@ io.on("connection", (socket) => {
 			console.log(`A user ${ username } joined the room ${ roomCode }`);
 			socket.emit("room_joined");
 
-			players.push({
-				id: socket.id,
-				username: username,
-				avatarId: avatarId,
-				roomCode: roomCode
-			});
+			if (players.filter(player => player.roomCode === roomCode).length === 0) {
+				players.push({
+					id: socket.id,
+					boardIds: [ 0, 1 ],
+					username: username,
+					avatarId: avatarId,
+					roomCode: roomCode
+				});
+			} else if (players.filter(player => player.roomCode === roomCode).length === 1) {
+				players.push({
+					id: socket.id,
+					boardIds: [ 0, 2 ],
+					username: username,
+					avatarId: avatarId,
+					roomCode: roomCode
+				});
+			} else if (players.filter(player => player.roomCode === roomCode).length === 2) {
+				players.push({
+					id: socket.id,
+					boardIds: [ 1, 2 ],
+					username: username,
+					avatarId: avatarId,
+					roomCode: roomCode
+				});
+			}
 
 			//if chosen room has 3 players start the game
 			io.in(roomCode).emit("updatePlayers", players.filter(player => player.roomCode === roomName), room && room.size === 3);
 		}
 
 		socket.on("startGame", () => {
-			players.filter(player => player.roomCode === roomCode);
-			players.forEach((player, index) => {
+			const playersInRoom = players.filter(player => player.roomCode === roomCode);
+
+			playersInRoom.forEach((player, index) => {
 				if (index === 0) {
-					console.log(player.username + "pierwszy");
 					const boards = [
 						{
 							id: 0,
 							matrix: [ null, null, null, null, null, null, null, null, null ],
 							isPlayerTurn: true,
 							hasWon: false,
+							isTie: false,
 							hasEnded: false
 						},
 						{
@@ -99,39 +120,40 @@ io.on("connection", (socket) => {
 							matrix: [ null, null, null, null, null, null, null, null, null ],
 							isPlayerTurn: false,
 							hasWon: false,
+							isTie: false,
 							hasEnded: false
 						}
 					];
 					io.to(player.id).emit("gameStarted", boards);
 
 				} else if (index === 1) {
-					console.log(player.username + "drugi");
 					const boards = [
 						{
 							id: 0,
 							matrix: [ null, null, null, null, null, null, null, null, null ],
 							isPlayerTurn: false,
 							hasWon: false,
+							isTie: false,
 							hasEnded: false
 						},
 						{
 							id: 2,
 							matrix: [ null, null, null, null, null, null, null, null, null ],
 							isPlayerTurn: true,
+							isTie: false,
 							hasWon: false,
 							hasEnded: false
 						}
 					];
 					io.to(player.id).emit("gameStarted", boards);
-
 				} else if (index === 2) {
-					console.log(player.username + "trzeci");
 					const boards = [
 						{
 							id: 1,
 							matrix: [ null, null, null, null, null, null, null, null, null ],
 							isPlayerTurn: true,
 							hasWon: false,
+							isTie: false,
 							hasEnded: false
 						},
 						{
@@ -139,17 +161,16 @@ io.on("connection", (socket) => {
 							matrix: [ null, null, null, null, null, null, null, null, null ],
 							isPlayerTurn: false,
 							hasWon: false,
+							isTie: false,
 							hasEnded: false
 						}
 					];
 					io.to(player.id).emit("gameStarted", boards);
 				}
-
 			});
 		});
 
 		socket.on("updateBoard", (matrix: BoardMatrix, boardId: number) => {
-			console.log(matrix, boardId);
 			socket.to(roomCode).emit("onUpdateBoard", matrix, boardId);
 		});
 
@@ -162,7 +183,24 @@ io.on("connection", (socket) => {
 		players = players.filter(player => player.id !== socket.id);
 
 		socket.emit("socketDisconnected", reason);
-		io.in(roomName).emit("otherUserDisconnected", players.filter(player => player.roomCode === roomName));
+		io.in(roomName).emit("otherUserDisconnected", players.filter(player => player.roomCode === roomName).map((player, index) => {
+			if (index === 0) {
+				return {
+					...player,
+					boardIds: [ 0, 1 ]
+				};
+			} else if (index === 1) {
+				return {
+					...player,
+					boardIds: [ 0, 2 ]
+				};
+			} else if (index === 2) {
+				return {
+					...player,
+					boardIds: [ 1, 2 ]
+				};
+			}
+		}));
 
 		console.log(`User disconnected ID: ${ socket.id }`);
 	});

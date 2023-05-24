@@ -39,7 +39,6 @@ const JoinRoom = () => {
 
 	const onSubmit = async () => {
 		setIsLoading(true);
-		console.log(data);
 		await SocketService
 			.joinRoom(data)
 			.then(() => {

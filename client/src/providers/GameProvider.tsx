@@ -1,18 +1,9 @@
 import { createContext } from "react";
 import { GameContextType } from "src/types/types";
+import { initialGameState } from "src/utils/constants";
 
 const defaultState: GameContextType = {
-	gameState: {
-		allPlayers: [],
-		isConnected: false,
-		hasJoined: false,
-		canStart: false,
-		isStarted: false,
-		username: "",
-		roomCode: null,
-		clientCount: 0,
-		avatarId: 0,
-	},
+	gameState: initialGameState,
 	setGameState: () => {
 	}
 };

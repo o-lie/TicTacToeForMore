@@ -1,8 +1,11 @@
 import React, { useContext } from "react";
 import { BoardMatrix } from "src/types/types";
 import { GameContext } from "src/providers/GameProvider";
-import { Stack, Typography } from "@mui/material";
+import { Avatar, ListItem, ListItemAvatar, ListItemText, Stack } from "@mui/material";
 import Cell from "src/components/Cell";
+import Apple from "src/assets/images/avatar-0.png";
+import Lemon from "src/assets/images/avatar-2.png";
+import Pepper from "src/assets/images/avatar-1.png";
 
 type Props = {
 	id: number,
@@ -36,16 +39,41 @@ const GameBoard = (props: Props) => {
 		}
 	};
 
+	const currentPlayer = gameState.allPlayers.find(player => player.username === gameState.username);
+	const opponent = gameState.allPlayers.find(player => (player.boardIds?.includes(id) && player.username !== gameState.username));
+
 	return (
 		<>
 			{
 				hasEnded
 					?
-					<Typography variant={ "h1" }>{ isTie ? "Remis" : hasWon ? "Wygrałeś!" : "Przegrałeś :(" }</Typography>
+					<div className="end-game-text">{ isTie ? "Remis" : hasWon ? "Wygrałeś!" : "Przegrałeś :(" }</div>
 					:
 					<Stack direction={ "column" }>
-						<Typography>{ isPlayerTurn ? "Twoja kolej" : "Kolej przeciwnika" }</Typography>
-
+						<div className="gameText">{ isPlayerTurn ? "Twoja kolej" : "Kolej przeciwnika" }</div>
+						<div className={ "players" }>
+							{
+								currentPlayer
+								&&
+                                <ListItem key={ currentPlayer.id } className="player player--current">
+                                    <ListItemAvatar>
+                                        <Avatar src={ currentPlayer.avatarId === 0 ? Apple : (currentPlayer.avatarId === 1 ? Lemon : Pepper) }></Avatar>
+                                    </ListItemAvatar>
+                                    <ListItemText primary={ currentPlayer.username }/>
+                                </ListItem>
+							}
+							VS
+							{
+								opponent
+								&&
+                                <ListItem key={ opponent.id } className="player">
+                                    <ListItemAvatar>
+                                        <Avatar src={ opponent.avatarId === 0 ? Apple : (opponent.avatarId === 1 ? Lemon : Pepper) }></Avatar>
+                                    </ListItemAvatar>
+                                    <ListItemText primary={ opponent.username }/>
+                                </ListItem>
+							}
+						</div>
 						<div className="board">
 							{
 								matrix.map((cell, cellIndex) => {

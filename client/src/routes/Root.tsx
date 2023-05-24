@@ -10,6 +10,7 @@ import JoinRoom from "src/components/JoinRoom";
 import { Player } from "src/types/types";
 import Logo from "src/components/Logo";
 import Header from "src/components/Header";
+import { initialGameState } from "src/utils/constants";
 
 const style = {
 	position: "absolute" as "absolute",
@@ -36,7 +37,7 @@ const Root = () => {
 	useEffect(() => {
 
 		socket?.on("socketDisconnected", (reason) => {
-			setGameState({ ...gameState, isConnected: false, canStart: false, isStarted: false });
+			setGameState(initialGameState);
 			showSnackbar(`Zostałeś rozłączony z serwerem. ${ reason }`, "error");
 		});
 

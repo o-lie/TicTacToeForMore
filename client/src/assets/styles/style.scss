@@ -16,7 +16,7 @@ body, #root {
 	flex-wrap: wrap;
 	gap: 4rem;
 	justify-content: center;
-
+	align-items: center;
 }
 
 .board {
@@ -33,4 +33,38 @@ body, #root {
 	}
 }
 
+.players {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
 
+.player {
+	width: min-content !important;
+	font-size: 1rem;
+
+	&--current {
+		div > span {
+			font-weight: 500;
+		}
+	}
+}
+
+.gameText {
+	font-weight: 500;
+	text-align: center;
+	font-size: 1.5rem;
+	text-transform: uppercase;
+}
+
+.end-game-text {
+	font-size: 3rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2rem 4rem;
+	height: min-content;
+	border-radius: 15px;
+	border: 2px solid #a677dd;
+}

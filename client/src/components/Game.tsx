@@ -43,7 +43,6 @@ const Game = () => {
 			setBoardsState(boards);
 		});
 	});
-
 	const onUpdateMatrix = (newMatrix: BoardMatrix, boardId: number) => {
 		setBoardsState(prevState =>
 			prevState?.map(prevBoard => {
